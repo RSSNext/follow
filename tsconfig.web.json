@@ -18,6 +18,9 @@
     "noUnusedLocals": false,
     "strict": true,
     "baseUrl": ".",
+    "types": [
+      "vite-plugin-pwa/client"
+    ],
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"

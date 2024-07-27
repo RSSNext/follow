@@ -2,7 +2,7 @@ import { Toaster as Sonner } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
-const Toaster = ({ ...props }: ToasterProps) => (
+export const Toaster = ({ ...props }: ToasterProps) => (
   <Sonner
     theme="system"
     className="toaster group"
@@ -20,5 +20,3 @@ const Toaster = ({ ...props }: ToasterProps) => (
     {...props}
   />
 )
-
-export { Toaster }

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url"
 import { sentryVitePlugin } from "@sentry/vite-plugin"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
+import { VitePWA } from "vite-plugin-pwa"
 
 import { getGitHash } from "./scripts/lib"
 
@@ -14,7 +15,7 @@ export default defineConfig({
   build: {
     outDir: resolve(__dirname, "out/web"),
     target: "ES2022",
-    sourcemap: true,
+    sourcemap: false,
   },
   root: "./src/renderer",
   envDir: resolve(__dirname, "."),
@@ -37,6 +38,29 @@ export default defineConfig({
         appVersion:
           process.env.NODE_ENV === "development" ? "dev" : pkg.version,
         electron: false,
+      },
+    }),
+    VitePWA({
+      registerType: "autoUpdate",
+      devOptions: {
+        enabled: true,
+      },
+      filename: "sw.ts",
+      manifest: {
+        theme_color: "#ff5c00",
+        name: "Follow",
+        icons: [
+          {
+            src: "/icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
       },
     }),
   ],

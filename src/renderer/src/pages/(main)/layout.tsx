@@ -16,9 +16,17 @@ import { AutoUpdater } from "@renderer/modules/feed-column/auto-updater"
 import { CornerPlayer } from "@renderer/modules/feed-column/corner-player"
 import { SearchCmdK } from "@renderer/modules/search/cmdk"
 import type { PropsWithChildren } from "react"
-import { useRef } from "react"
+import { lazy, useRef } from "react"
 import { useResizable } from "react-resizable-layout"
 import { Outlet } from "react-router-dom"
+
+const ReloadPrompt = ELECTRON ?
+    () => null :
+  lazy(() =>
+    import("@renderer/components/common/ReloadPrompt").then((module) => ({
+      default: module.ReloadPrompt,
+    })),
+  )
 
 export function Component() {
   const isAuthFail = useLoginModalShow()
@@ -62,6 +70,7 @@ export function Component() {
         <Outlet />
       </main>
 
+      <ReloadPrompt />
       <SearchCmdK />
       {isAuthFail && !user && (
         <RootPortal>

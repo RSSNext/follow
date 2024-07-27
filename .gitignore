@@ -10,3 +10,5 @@ out
 # Sentry Config File
 .env.sentry-build-plugin
 .vercel
+
+dev-dist
