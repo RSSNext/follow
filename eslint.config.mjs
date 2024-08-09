@@ -22,6 +22,7 @@ export default defineConfig(
       },
     },
     rules: {
+      "@eslint-react/no-clone-element": 0,
       "no-restricted-globals": [
         "error",
         {
