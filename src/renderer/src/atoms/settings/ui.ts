@@ -2,7 +2,7 @@ import type { UISettings } from "@shared/interface/settings"
 
 import { createSettingAtom } from "./helper"
 
-const createDefaultSettings = (): UISettings => ({
+export const createDefaultSettings = (): UISettings => ({
   // Sidebar
   entryColWidth: 356,
   feedColWidth: 256,
@@ -29,6 +29,9 @@ const createDefaultSettings = (): UISettings => ({
 
   // View
   pictureViewMasonry: true,
+
+  // TTS
+  voice: "en-US-AndrewMultilingualNeural",
 })
 
 export const {

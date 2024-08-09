@@ -8,6 +8,7 @@ import {
 import { Media } from "@renderer/components/ui/media"
 import type { Components } from "hast-util-to-jsx-runtime"
 import { toJsxRuntime } from "hast-util-to-jsx-runtime"
+import { toText } from "hast-util-to-text"
 import { createElement } from "react"
 import { Fragment, jsx, jsxs } from "react/jsx-runtime"
 import { renderToString } from "react-dom/server"
@@ -52,7 +53,7 @@ export const parseHtml = async (
   const hastTree = pipeline.runSync(tree, file)
 
   return {
-    content: toJsxRuntime(hastTree, {
+    toContent: () => toJsxRuntime(hastTree, {
       Fragment,
       ignoreInvalidStyle: true,
       jsx: (type, props, key) => jsx(type as any, props, key),
@@ -129,6 +130,7 @@ export const parseHtml = async (
         },
       },
     }),
+    toText: () => toText(hastTree),
   }
 }
 

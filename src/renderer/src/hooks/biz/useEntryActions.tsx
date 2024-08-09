@@ -1,3 +1,4 @@
+import { getPlayerAtomValue, Player } from "@renderer/atoms/player"
 import {
   getReadabilityStatus,
   isInReadability,
@@ -12,6 +13,7 @@ import { COPY_MAP, views } from "@renderer/constants"
 import { shortcuts } from "@renderer/constants/shortcuts"
 import { tipcClient } from "@renderer/lib/client"
 import { nextFrame } from "@renderer/lib/dom"
+import { parseHtml } from "@renderer/lib/parse-html"
 import { cn, getOS } from "@renderer/lib/utils"
 import type { CombinedEntryModel } from "@renderer/models"
 import { useTipModal } from "@renderer/modules/wallet/hooks"
@@ -22,7 +24,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import type { FetchError } from "ofetch"
 import { ofetch } from "ofetch"
 import type { ReactNode } from "react"
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { toast } from "sonner"
 
 export const useEntryReadabilityToggle = ({
@@ -143,6 +145,9 @@ export const useEntryActions = ({
     id: populatedEntry?.entries.id ?? "",
     url: populatedEntry?.entries.url ?? "",
   })
+
+  const [ttsLoading, setTtsLoading] = useState(false)
+
   const items = useMemo(() => {
     if (!populatedEntry || view === undefined) return []
     const items: {
@@ -208,6 +213,35 @@ export const useEntryActions = ({
         onClick: () => {
           if (!populatedEntry.entries.url) return
           window.open(populatedEntry.entries.url, "_blank")
+        },
+      },
+      {
+        key: "tts",
+        name: "Play TTS",
+        shortcut: shortcuts.entry.tts.key,
+        className: ttsLoading ? "i-mgc-loading-3-cute-re animate-spin" : "i-mgc-voice-cute-re",
+        hide: !populatedEntry.entries.content,
+        onClick: async () => {
+          if (ttsLoading) return
+          if (!populatedEntry.entries.content) return
+          setTtsLoading(true)
+          if (getPlayerAtomValue().entryId === populatedEntry.entries.id) {
+            Player.togglePlayAndPause()
+          } else {
+            const filePath = await tipcClient?.tts({
+              id: populatedEntry.entries.id,
+              text: (await parseHtml(populatedEntry.entries.content)).toText(),
+            })
+            if (filePath) {
+              Player.mount({
+                type: "audio",
+                entryId: populatedEntry.entries.id,
+                src: `file://${filePath}`,
+                currentTime: 0,
+              })
+            }
+          }
+          setTtsLoading(false)
         },
       },
       {

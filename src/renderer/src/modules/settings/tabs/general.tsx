@@ -5,9 +5,22 @@ import {
 import {
   createSetting,
 } from "@renderer/atoms/settings/helper"
+import {
+  createDefaultSettings,
+  setUISetting,
+  useUISettingSelector,
+} from "@renderer/atoms/settings/ui"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@renderer/components/ui/select"
 import { initPostHog } from "@renderer/initialize/posthog"
 import { tipcClient } from "@renderer/lib/client"
 import { clearLocalPersistStoreData } from "@renderer/store/utils/clear"
+import { useQuery } from "@tanstack/react-query"
 import { useCallback, useEffect } from "react"
 
 import { SettingsTitle } from "../title"
@@ -79,6 +92,10 @@ export const SettingGeneral = () => {
                 "Automatically mark single-level entries (e.g., social media posts, pictures, video views) as read when they enter the view.",
             }),
 
+            { type: "title", value: "TTS" },
+
+            VoiceSelector,
+
             {
               type: "title",
               value: "Privacy & Data",
@@ -119,5 +136,37 @@ export const SettingGeneral = () => {
         />
       </div>
     </>
+  )
+}
+
+export const VoiceSelector = () => {
+  const { data } = useQuery({
+    queryFn: () => tipcClient?.getVoices(),
+    queryKey: ["voices"],
+  })
+  const voice = useUISettingSelector((state) => state.voice)
+
+  return (
+    <div className="-mt-1 mb-3 flex items-center justify-between">
+      <span className="shrink-0 text-sm font-medium">Voices</span>
+      <Select
+        defaultValue={createDefaultSettings().voice}
+        value={voice}
+        onValueChange={(value) => {
+          setUISetting("voice", value)
+        }}
+      >
+        <SelectTrigger size="sm" className="w-48">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="h-64">
+          {data?.map((item) => (
+            <SelectItem key={item.ShortName} value={item.ShortName}>
+              {item.FriendlyName}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   )
 }

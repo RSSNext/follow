@@ -36,6 +36,12 @@ const useUISettingSync = () => {
     }
     return
   }, [setting.showDockBadge])
+
+  useEffect(() => {
+    if (setting.voice) {
+      tipcClient?.setVoice(setting.voice)
+    }
+  }, [setting.voice])
 }
 export const SettingSync = () => {
   useUISettingSync()

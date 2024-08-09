@@ -88,7 +88,7 @@ function EntryContentRender({ entryId }: { entryId: string }) {
       parseHtml(processContent, {
         renderInlineStyle: readerRenderInlineStyle,
       }).then((parsed) => {
-        setContent(parsed.content)
+        setContent(parsed.toContent())
       })
     } else {
       setContent(undefined)
@@ -314,7 +314,7 @@ const ReadabilityContent = ({ entryId }: { entryId: string }) => {
       parseHtml(processContent, {
         renderInlineStyle: true,
       }).then((parsed) => {
-        setRenderer(parsed.content)
+        setRenderer(parsed.toContent())
       })
     } else {
       setRenderer(null)

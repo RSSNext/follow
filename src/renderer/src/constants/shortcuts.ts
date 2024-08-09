@@ -69,6 +69,10 @@ export const shortcuts = {
       key: "B",
       extra: "Double Click",
     },
+    tts: {
+      name: "Play TTS",
+      key: "Shift+Meta+V",
+    },
     copyLink: {
       name: "Copy Link",
       key: "Shift+Meta+C",
