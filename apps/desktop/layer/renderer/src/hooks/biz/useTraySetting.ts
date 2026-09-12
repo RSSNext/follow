@@ -33,6 +33,9 @@ export const useSetMinimizeToTray = () => {
         const needsRestart = await ipcServices?.setting.setMinimizeToTray(value)
         if (!needsRestart) return
         toast(t("general.minimize_to_tray.restart_to_remove"), {
+          // The default 4s is too short for a toast whose only point is its action.
+          duration: 30_000,
+          closeButton: true,
           action: {
             label: t("general.minimize_to_tray.restart_now"),
             onClick: () => ipcServices?.app.relaunch(),

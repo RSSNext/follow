@@ -130,8 +130,18 @@ export class AppService extends IpcService {
 
   @IpcMethod()
   relaunch(): void {
-    app.relaunch()
-    app.exit(0)
+    app.relaunch({
+      // Inside an AppImage, `process.execPath` points into the FUSE mount, which
+      // is unmounted once this process exits — the relauncher would then fail to
+      // exec it and the app would simply quit. `$APPIMAGE` is the outer bundle.
+      // It is undefined elsewhere, which keeps Electron's default behaviour.
+      execPath: process.env.APPIMAGE,
+      // Drop the autostart flag so a relaunch never resurrects the app hidden.
+      args: process.argv.slice(1).filter((arg) => arg !== START_IN_TRAY_ARGS),
+    })
+    // `app.quit()` rather than `app.exit()`: the `before-quit` handlers persist
+    // the window bounds and flush the cookie store.
+    app.quit()
   }
 
   @IpcMethod()
