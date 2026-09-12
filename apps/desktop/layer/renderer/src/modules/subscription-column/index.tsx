@@ -1,6 +1,6 @@
 import { useGlobalFocusableScopeSelector } from "@follow/components/common/Focusable/hooks.js"
 import { Spring } from "@follow/components/constants/spring.js"
-import { ActionButton } from "@follow/components/ui/button/index.js"
+import { ActionButton, Button } from "@follow/components/ui/button/index.js"
 import { RootPortal } from "@follow/components/ui/portal/index.js"
 import { FeedViewType } from "@follow/constants"
 import { useTypeScriptHappyCallback } from "@follow/hooks"
@@ -16,7 +16,7 @@ import { Lethargy } from "lethargy"
 import { AnimatePresence, m } from "motion/react"
 import type { FC, PropsWithChildren } from "react"
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
-import { Trans } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 
 import { useRootContainerElement } from "~/atoms/dom"
 import { useIsInMASReview } from "~/atoms/server-configs"
@@ -28,12 +28,13 @@ import { useBackHome } from "~/hooks/biz/useNavigateEntry"
 import { useReduceMotion } from "~/hooks/biz/useReduceMotion"
 import { parseView, useRouteParamsSelector } from "~/hooks/biz/useRouteParams"
 import { useTimelineList } from "~/hooks/biz/useTimelineList"
+import { useConfirmUnsubscribeSubscriptionModal } from "~/modules/modal/hooks/useConfirmUnsubscribeSubscriptionModal"
 import { useSettingModal } from "~/modules/settings/modal/useSettingModal"
 
 import { WindowUnderBlur } from "../../components/ui/background"
 import { COMMAND_ID } from "../command/commands/id"
 import { useCommandBinding } from "../command/hooks/use-command-binding"
-import { getSelectedFeedIds, resetSelectedFeedIds, setSelectedFeedIds } from "./atom"
+import { useSelectedFeedIdsState, getSelectedFeedIds, resetSelectedFeedIds, setSelectedFeedIds } from "./atom"
 import { useShouldFreeUpSpace } from "./hook"
 import { SubscriptionListGuard } from "./subscription-list/SubscriptionListGuard"
 import { SubscriptionColumnHeader } from "./SubscriptionColumnHeader"
@@ -178,6 +179,7 @@ export function SubscriptionColumn({
       </div>
 
       {children}
+      <BatchActionBar />
     </WindowUnderBlur>
   )
 }
@@ -348,4 +350,58 @@ const CommandsHandler = ({
   }, [setActive, timelineList])
 
   return null
+}
+
+const BatchActionBar = () => {
+  const [selectedFeedIds, setSelectedFeedIds] = useSelectedFeedIdsState()
+  const { t } = useTranslation()
+  const presentDeleteSubscription = useConfirmUnsubscribeSubscriptionModal()
+
+  const handleClearSelection = useCallback(() => {
+    setSelectedFeedIds([])
+  }, [setSelectedFeedIds])
+
+  const handleUnfollowSelected = useCallback(() => {
+    if (selectedFeedIds.length === 0) return
+    presentDeleteSubscription(selectedFeedIds, handleClearSelection)
+  }, [selectedFeedIds, presentDeleteSubscription, handleClearSelection])
+
+  return (
+    <AnimatePresence>
+      {selectedFeedIds.length > 0 && (
+        <m.div
+          initial={{ y: 8, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 8, opacity: 0 }}
+          transition={Spring.presets.snappy}
+          className="border-t border-material-opaque bg-material-ultra-thick px-3 py-2"
+          onClick={stopPropagation}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-text-secondary">
+              {t("sidebar.feed_actions.selected_count", { count: selectedFeedIds.length })}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearSelection}
+                className="text-text-secondary"
+              >
+                {t("words.cancel")}
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleUnfollowSelected}
+              >
+                <i className="i-mgc-delete-2-cute-re mr-1 size-4" />
+                {t("sidebar.feed_actions.unfollow_feed_many")}
+              </Button>
+            </div>
+          </div>
+        </m.div>
+      )}
+    </AnimatePresence>
+  )
 }

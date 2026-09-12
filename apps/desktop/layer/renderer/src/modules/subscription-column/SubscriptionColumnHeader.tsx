@@ -3,9 +3,9 @@ import { Logo } from "@follow/components/icons/logo.jsx"
 import { ActionButton } from "@follow/components/ui/button/index.js"
 import { stopPropagation } from "@follow/utils/dom"
 import { cn } from "@follow/utils/utils"
-import { m } from "motion/react"
+import { AnimatePresence, m } from "motion/react"
 import type { FC, PropsWithChildren } from "react"
-import { memo, useEffect, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router"
 import { toast } from "sonner"
@@ -22,7 +22,10 @@ import { useRouteParamsSelector } from "~/hooks/biz/useRouteParams"
 import { useI18n } from "~/hooks/common"
 import { useContextMenu } from "~/hooks/common/useContextMenu"
 import { copyToClipboard } from "~/lib/clipboard"
+import { useConfirmUnsubscribeSubscriptionModal } from "~/modules/modal/hooks/useConfirmUnsubscribeSubscriptionModal"
 import { ProfileButton } from "~/modules/user/ProfileButton"
+
+import { useSelectedFeedIdsState } from "./atom"
 
 export const SubscriptionColumnHeader = memo(() => {
   const timelineId = useRouteParamsSelector((s) => s.timelineId)
@@ -31,6 +34,15 @@ export const SubscriptionColumnHeader = memo(() => {
   const location = useLocation()
   const normalStyle = !window.electron || window.electron.process.platform !== "darwin"
   const { t } = useTranslation()
+  const [selectedFeedIds, setSelectedFeedIds] = useSelectedFeedIdsState()
+  const isMultiSelectMode = selectedFeedIds.length > 0
+
+  const toggleMultiSelectMode = useCallback(() => {
+    if (isMultiSelectMode) {
+      setSelectedFeedIds([])
+    }
+  }, [isMultiSelectMode, setSelectedFeedIds])
+
   return (
     <div
       className={cn(
@@ -66,6 +78,15 @@ export const SubscriptionColumnHeader = memo(() => {
         >
           <i className="i-mgc-add-cute-re size-5 text-text-secondary" />
         </ActionButton>
+
+        {isMultiSelectMode && (
+          <ActionButton
+            tooltip={t("sidebar.feed_actions.exit_multi_select")}
+            onClick={toggleMultiSelectMode}
+          >
+            <i className="i-mgc-checkbox-circle-fill size-5 text-accent" />
+          </ActionButton>
+        )}
 
         <ProfileButton method="modal" animatedAvatar />
         <LayoutActionButton />
