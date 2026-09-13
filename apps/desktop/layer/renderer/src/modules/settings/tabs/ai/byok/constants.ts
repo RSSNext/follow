@@ -5,4 +5,5 @@ export const PROVIDER_OPTIONS: { value: ByokProviderName; label: string }[] = [
   { value: "google", label: "Google" },
   { value: "vercel-ai-gateway", label: "Vercel AI Gateway" },
   { value: "openrouter", label: "OpenRouter" },
+  { value: "ollama", label: "Ollama" },
 ]

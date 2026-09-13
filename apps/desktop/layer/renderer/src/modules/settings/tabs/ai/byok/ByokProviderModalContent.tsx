@@ -39,12 +39,28 @@ export const ByokProviderModalContent = ({
   // Get the first available provider or fallback to the current one
   const defaultProvider = availableProviders[0]?.value ?? provider?.provider ?? "openai"
 
+  // Auto-fill base URL when Ollama is selected
+  const getDefaultBaseURL = (p: ByokProviderName) => {
+    if (p === "ollama") return "http://localhost:11434/v1"
+    return provider?.provider === p ? (provider?.baseURL ?? null) : null
+  }
+
   const [formData, setFormData] = useState<UserByokProviderConfig>({
     provider: provider?.provider ?? defaultProvider,
-    baseURL: provider?.baseURL ?? null,
+    baseURL: provider?.baseURL ?? getDefaultBaseURL(defaultProvider),
     apiKey: provider?.apiKey ?? null,
+    model: provider?.model ?? null,
     headers: provider?.headers ?? {},
   })
+
+  const handleProviderChange = (value: ByokProviderName) => {
+    setFormData((prev) => ({
+      ...prev,
+      provider: value,
+      // Auto-fill base URL for Ollama, preserve existing URL for other providers
+      baseURL: value === "ollama" ? "http://localhost:11434/v1" : prev.baseURL,
+    }))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,9 +77,7 @@ export const ByokProviderModalContent = ({
         <Select
           value={formData.provider}
           disabled={availableProviders.length === 0}
-          onValueChange={(value) =>
-            setFormData({ ...formData, provider: value as ByokProviderName })
-          }
+          onValueChange={(value) => handleProviderChange(value as ByokProviderName)}
         >
           <SelectTrigger id="provider">
             <SelectValue />
@@ -93,6 +107,23 @@ export const ByokProviderModalContent = ({
           }
         />
         <p className="text-xs text-text-secondary">{t("byok.providers.form.base_url_help")}</p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="model">{t("byok.providers.form.model")}</Label>
+        <Input
+          id="model"
+          type="text"
+          placeholder={t("byok.providers.form.model_placeholder")}
+          value={formData.model ?? ""}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              model: e.target.value || null,
+            })
+          }
+        />
+        <p className="text-xs text-text-secondary">{t("byok.providers.form.model_help")}</p>
       </div>
 
       <div className="space-y-2">
