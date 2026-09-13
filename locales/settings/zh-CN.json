@@ -68,6 +68,7 @@
   "actions.action_card.operation_options.matches_regex": "匹配正则表达式",
   "actions.action_card.operator": "运算符",
   "actions.action_card.or": "或者",
+  "actions.action_card.regex_help": "正则表达式示例：(car|bottle|people)。如果要按字面量匹配特殊字符，请进行转义。",
   "actions.action_card.rewrite_rules": "重写规则",
   "actions.action_card.settings": "设置",
   "actions.action_card.silence": "静音",

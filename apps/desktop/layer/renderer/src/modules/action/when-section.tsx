@@ -105,6 +105,7 @@ export const WhenSection = ({ index }: WhenSectionProps) => {
                           />
                           <ValueInput
                             type={type}
+                            operator={item.operator}
                             value={item.value}
                             onChange={(value) => change("value", value)}
                             disabled={disabled}
@@ -211,15 +212,19 @@ const OperationSelect = ({
 
 const ValueInput = ({
   type,
+  operator,
   value,
   onChange,
   disabled,
 }: {
   type: string
+  operator?: ActionOperation
   value?: string | number
   onChange: (value: string | number) => void
   disabled?: boolean
 }) => {
+  const { t } = useTranslation("settings")
+
   switch (type) {
     case "view": {
       return (
@@ -264,12 +269,19 @@ const ValueInput = ({
     }
     default: {
       return (
-        <Input
-          disabled={disabled}
-          value={value as string | undefined}
-          className="h-9"
-          onChange={(event) => onChange(event.target.value)}
-        />
+        <div className="flex flex-col gap-1.5 @[800px]:flex-1">
+          <Input
+            disabled={disabled}
+            value={value as string | undefined}
+            className="h-9"
+            onChange={(event) => onChange(event.target.value)}
+          />
+          {operator === "regex" && (
+            <p className="text-xs leading-relaxed text-text-tertiary">
+              {t("actions.action_card.regex_help")}
+            </p>
+          )}
+        </div>
       )
     }
   }

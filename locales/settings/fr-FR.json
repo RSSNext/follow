@@ -68,6 +68,7 @@
   "actions.action_card.operation_options.matches_regex": "Correspond à l'expression régulière",
   "actions.action_card.operator": "Opérateur",
   "actions.action_card.or": "Ou",
+  "actions.action_card.regex_help": "Exemple de regex : (car|bottle|people). Échappez les caractères spéciaux pour les faire correspondre littéralement.",
   "actions.action_card.rewrite_rules": "Règles de réécriture",
   "actions.action_card.settings": "Paramètres",
   "actions.action_card.silence": "Silence",

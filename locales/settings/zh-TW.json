@@ -68,6 +68,7 @@
   "actions.action_card.operation_options.matches_regex": "符合正規表達式",
   "actions.action_card.operator": "運算子",
   "actions.action_card.or": "或",
+  "actions.action_card.regex_help": "正規表示式範例：(car|bottle|people)。如果要按字面量比對特殊字元，請進行跳脫。",
   "actions.action_card.rewrite_rules": "重寫規則",
   "actions.action_card.settings": "設置",
   "actions.action_card.silence": "靜音",

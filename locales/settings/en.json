@@ -68,6 +68,7 @@
   "actions.action_card.operation_options.matches_regex": "Matches Regex",
   "actions.action_card.operator": "Operator",
   "actions.action_card.or": "Or",
+  "actions.action_card.regex_help": "Regex pattern example: (car|bottle|people). Escape special characters when you want to match them literally.",
   "actions.action_card.rewrite_rules": "Rewrite Rules",
   "actions.action_card.settings": "Settings",
   "actions.action_card.silence": "Silence",

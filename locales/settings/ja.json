@@ -68,6 +68,7 @@
   "actions.action_card.operation_options.matches_regex": "正規表現に一致する",
   "actions.action_card.operator": "オペレーター",
   "actions.action_card.or": "または",
+  "actions.action_card.regex_help": "正規表現の例: (car|bottle|people)。特殊文字を文字として一致させる場合はエスケープしてください。",
   "actions.action_card.rewrite_rules": "リライトルール",
   "actions.action_card.settings": "設定",
   "actions.action_card.silence": "サイレント",
